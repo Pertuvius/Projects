@@ -50,8 +50,6 @@ def main() -> int:
     parser.add_argument("--source", type=Path, required=True)
     args = parser.parse_args()
     root = args.source.resolve()
-    if not (root / "configure").is_file():
-        raise SystemExit(f"Not a FreedroidRPG source directory: {root}")
     changes = patch_source(root)
     if changes:
         print("Applied Android SDL compatibility changes:")
@@ -64,3 +62,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
