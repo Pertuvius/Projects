@@ -17,13 +17,12 @@ FreedroidRPG already uses SDL 1.2 APIs. The Android runtime has an SDL 1.2 imple
 
 ## Directory layout
 
-1. Clone `https://github.com/pelya/commandergenius` (branch `sdl_android`) with its submodules into a working directory:
+1. Clone `https://github.com/pelya/commandergenius` (branch `sdl_android`) into a working directory. The SDL 1.2, SDL_image, SDL_gfx and PNG/JPEG modules used here are present in the main repository; the optional game submodules are not needed for FreedroidRPG:
 
    ```sh
-   git clone --branch sdl_android --recurse-submodules https://github.com/pelya/commandergenius.git
+   git clone --branch sdl_android https://github.com/pelya/commandergenius.git
    ```
 
-   If it was cloned without submodules, run `git submodule update --init --recursive` from that repository.
 2. Copy this overlay's `AndroidAppSettings.cfg`, `AndroidBuild.sh`, `AndroidPreBuild.sh`, `icon.png` and `tools/` directory into:
 
    `commandergenius/project/jni/application/freedroidrpg/`

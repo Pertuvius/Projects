@@ -53,7 +53,7 @@ jobs:
 
       - name: Fetch SDL 1.2 Android runtime
         run: |
-          git clone --depth 1 --branch sdl_android --recurse-submodules \
+          git clone --depth 1 --branch sdl_android \
             https://github.com/pelya/commandergenius.git commandergenius
 
       - name: Add FreedroidRPG port files and fetch original game source
