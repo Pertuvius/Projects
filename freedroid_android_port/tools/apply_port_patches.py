@@ -46,10 +46,10 @@ def patch_source(root: Path) -> list[str]:
 
 
 def disable_unused_audio_modules(project_root: Path) -> list[str]:
-    """Keep optional SDL_mixer/FLAC modules out while this port disables sound."""
+    """Keep runtime modules with optional media dependencies out of this silent build."""
     changed: list[str] = []
-    guard = "ifeq ($(FREEDROID_AUDIO_ENABLED),1)"
-    for module in ("sdl_mixer", "sdl_sound", "sdl_ttf", "flac"):
+    guard = "ifeq ($(FREEDROID_OPTIONAL_MEDIA_ENABLED),1)"
+    for module in ("sdl_mixer", "sdl_sound", "sdl_ttf", "flac", "fontconfig", "sndfile", "theora", "tremor"):
         path = project_root / "jni" / module / "Android.mk"
         if not path.is_file():
             raise SystemExit(f"Required SDL runtime module file is missing: {path}")
@@ -58,9 +58,9 @@ def disable_unused_audio_modules(project_root: Path) -> list[str]:
             continue
         if not text.startswith("LOCAL_PATH := $(call my-dir)"):
             raise SystemExit(f"Unexpected SDL runtime makefile format: {path}")
-        text = f"{guard}\n{text.rstrip()}\n\nendif # FREEDROID_AUDIO_ENABLED\n"
+        text = f"{guard}\n{text.rstrip()}\n\nendif # FREEDROID_OPTIONAL_MEDIA_ENABLED\n"
         path.write_text(text, encoding="utf-8")
-        changed.append(f"{module}: optional audio module guarded")
+        changed.append(f"{module}: optional media module guarded")
     return changed
 
 
