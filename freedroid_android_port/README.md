@@ -44,6 +44,7 @@ The pre-build hook narrows the generated `APP_MODULES` list to SDL 1.2, the runt
 - Removes `SDL_HWSURFACE` from the SDL fullscreen-mode query.
 - Uses POSIX owner permission flags for the configuration-directory `mkdir()` call.
 - Defines an empty `LOCALEDIR` fallback for the build with NLS disabled.
+- Adds `-fPIC` to the bundled Lua static-library build for shared Android linking.
 - Uses a software `SDL_CreateRGBSurface()` instead of requesting `SDL_HWSURFACE`.
 - Removes `SDL_RLEACCEL` from all four `SDL_SetAlpha()` calls. The SDL Android runtime documents that RLE acceleration is unsupported.
 

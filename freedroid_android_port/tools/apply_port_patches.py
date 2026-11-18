@@ -45,6 +45,10 @@ def patch_source(root: Path) -> list[str]:
         "src/image.c": [
             ("SDL_SRCALPHA | SDL_RLEACCEL", "SDL_SRCALPHA", 2),
         ],
+        "externals/lua/lua.mk": [
+            ("CFLAGS= -O2 -Wall -Wextra $(SYSCFLAGS) $(MYCFLAGS)",
+             "CFLAGS= -O2 -Wall -Wextra -fPIC $(SYSCFLAGS) $(MYCFLAGS)", 1),
+        ],
     }
     locale_source = root / "src/misc.c"
     locale_fallback = "#ifndef LOCALEDIR\n#define LOCALEDIR \"\"\n#endif\n\n"

@@ -109,7 +109,7 @@ fi
 echo "Lua cross compiler: $LUA_CC"
 JOBS=${BUILD_NUM_CPUS:-$(getconf _NPROCESSORS_ONLN 2>/dev/null || echo 4)}
 "$ENV_WRAPPER" make -C externals/lua clean CC="$LUA_CC" AR="$LUA_AR rcu" RANLIB="$LUA_RANLIB"
-"$ENV_WRAPPER" make -j"$JOBS" -C externals/lua CC="$LUA_CC" AR="$LUA_AR rcu" RANLIB="$LUA_RANLIB" MYCFLAGS="-fPIC"
+"$ENV_WRAPPER" make -j"$JOBS" -C externals/lua CC="$LUA_CC" AR="$LUA_AR rcu" RANLIB="$LUA_RANLIB"
 "$ENV_WRAPPER" make -j"$JOBS" -C src
 
 
