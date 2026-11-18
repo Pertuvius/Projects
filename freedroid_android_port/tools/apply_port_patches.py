@@ -20,6 +20,15 @@ def replace_exact(path: Path, old: str, new: str, *, expected: int = 1) -> bool:
     return True
 
 
+def insert_before_once(path: Path, marker: str, insertion: str, sentinel: str) -> bool:
+    text = path.read_text(encoding="utf-8")
+    if sentinel in text:
+        return False
+    if text.count(marker) != 1:
+        raise SystemExit(f"Patch mismatch in {path}: expected one insertion marker {marker!r}")
+    path.write_text(text.replace(marker, insertion + marker), encoding="utf-8")
+    return True
+
 def patch_source(root: Path) -> list[str]:
     applied: list[str] = []
     targets = {
@@ -37,6 +46,10 @@ def patch_source(root: Path) -> list[str]:
             ("SDL_SRCALPHA | SDL_RLEACCEL", "SDL_SRCALPHA", 2),
         ],
     }
+    locale_source = root / "src/misc.c"
+    locale_fallback = "#ifndef LOCALEDIR\n#define LOCALEDIR \"\"\n#endif\n\n"
+    if insert_before_once(locale_source, "void init_data_dirs_path(void)", locale_fallback, "#ifndef LOCALEDIR"):
+        applied.append("src/misc.c: define empty LOCALEDIR fallback when NLS is disabled")
     for relative, edits in targets.items():
         path = root / relative
         if not path.is_file():
