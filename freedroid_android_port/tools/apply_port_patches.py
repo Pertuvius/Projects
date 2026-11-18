@@ -51,6 +51,7 @@ def main() -> int:
     parser.add_argument("--source", type=Path, required=True)
     args = parser.parse_args()
     root = args.source.absolute()
+    print(f"Python source root: arg={args.source!s} arg_exists={args.source.exists()} root={root!s} root_exists={root.exists()} root_is_dir={root.is_dir()}", flush=True)
     changes = patch_source(root)
     if changes:
         print("Applied Android SDL compatibility changes:")
