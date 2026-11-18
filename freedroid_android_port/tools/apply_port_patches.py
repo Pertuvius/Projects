@@ -37,6 +37,7 @@ def patch_source(root: Path) -> list[str]:
     }
     for relative, edits in targets.items():
         path = root / relative
+        print(f"Checking source file {path}: exists={path.exists()}, is_file={path.is_file()}", flush=True)
         if not path.is_file():
             raise SystemExit(f"Required source file is missing: {path}")
         for old, new, expected in edits:
@@ -62,4 +63,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
