@@ -1,0 +1,5 @@
+build/
+android-tools/
+freedroidRPG-1.0/
+libapplication-*.so
+AndroidData/freedroid-data.zip
