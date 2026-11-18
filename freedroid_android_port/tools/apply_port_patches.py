@@ -49,7 +49,7 @@ def disable_unused_audio_modules(project_root: Path) -> list[str]:
     """Keep optional SDL_mixer/FLAC modules out while this port disables sound."""
     changed: list[str] = []
     guard = "ifeq ($(FREEDROID_AUDIO_ENABLED),1)"
-    for module in ("sdl_mixer", "flac"):
+    for module in ("sdl_mixer", "sdl_sound", "flac"):
         path = project_root / "jni" / module / "Android.mk"
         if not path.is_file():
             raise SystemExit(f"Required SDL runtime module file is missing: {path}")
