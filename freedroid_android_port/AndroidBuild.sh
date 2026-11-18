@@ -99,9 +99,19 @@ if [ ! -f Makefile ] || [ ! -f config.status ] || [ "$SOURCE_DIR/configure" -nt 
     --with-open-cmd=true
 fi
 
+LUA_CC=$("$ENV_WRAPPER" sh -c 'printf "%s" "$CC"')
+LUA_AR=$("$ENV_WRAPPER" sh -c 'printf "%s" "$AR"')
+LUA_RANLIB=$("$ENV_WRAPPER" sh -c 'printf "%s" "$RANLIB"')
+if [ -z "$LUA_CC" ] || [ -z "$LUA_AR" ] || [ -z "$LUA_RANLIB" ]; then
+  echo "Could not read Android cross tools from $ENV_WRAPPER" >&2
+  exit 8
+fi
+echo "Lua cross compiler: $LUA_CC"
 JOBS=${BUILD_NUM_CPUS:-$(getconf _NPROCESSORS_ONLN 2>/dev/null || echo 4)}
-"$ENV_WRAPPER" make -j"$JOBS" -C externals/lua
+"$ENV_WRAPPER" make -C externals/lua clean CC="$LUA_CC" AR="$LUA_AR rcu" RANLIB="$LUA_RANLIB"
+"$ENV_WRAPPER" make -j"$JOBS" -C externals/lua CC="$LUA_CC" AR="$LUA_AR rcu" RANLIB="$LUA_RANLIB"
 "$ENV_WRAPPER" make -j"$JOBS" -C src
+
 
 BUILT="$BUILD_DIR/src/freedroidRPG"
 if [ ! -f "$BUILT" ]; then
