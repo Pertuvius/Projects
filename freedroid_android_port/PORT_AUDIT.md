@@ -40,6 +40,6 @@ GitHub Actions run 44289307035 downloaded the SDL Android runtime and FreedroidR
 
 Run 44290864690 stopped at the same NDK check because the pre-build hook was not executable in that commit. The hook's executable bit was restored afterward.
 
-Run 44291736680 confirmed the hook runs, then found the release archive omits configure.ac. Run 44292411160 passed the hook's source checks but the patcher rejected the source root. The redundant root check is removed; the patcher now validates each C source file it edits.
+Run 44291736680 confirmed the hook runs, then found the release archive omits configure.ac. Run 44292411160 passed the hook's source checks but the patcher rejected the source root. The redundant root check is removed. Run 44293218737 then reported src/init.c missing under that root. A CI source-tree listing and direct checks are being added because run 44288440768 found the expected C files in the same release archive.
 
 No game native library or APK has completed a successful build. Device launch, controls, save paths, lifecycle/resume, performance and playability remain unverified.

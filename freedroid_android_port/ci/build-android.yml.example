@@ -80,6 +80,22 @@ jobs:
             mv "$SOURCE_DIR" "$APP_DIR/freedroidRPG-1.0"
           fi
 
+      - name: Validate FreedroidRPG source archive
+        shell: bash
+        run: |
+          SOURCE_ROOT="commandergenius/project/jni/application/freedroidrpg/freedroidRPG-1.0"
+          missing=0
+          for required in configure src/init.c src/graphics.c src/image.c data lua_modules; do
+            if [ ! -e "$SOURCE_ROOT/$required" ]; then
+              echo "Missing required FreedroidRPG archive entry: $required" >&2
+              missing=1
+            fi
+          done
+          find "$SOURCE_ROOT" -maxdepth 2 -type f -print | sort | sed -n '1,80p'
+          if [ "$missing" -ne 0 ]; then
+            exit 1
+          fi
+
       - name: Build ARM64 debug APK
         working-directory: commandergenius
         run: ./build.sh debug freedroidrpg
