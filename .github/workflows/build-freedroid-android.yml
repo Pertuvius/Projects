@@ -28,12 +28,14 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
         with:
+          accept-android-sdk-licenses: true
+          log-accepted-android-sdk-licenses: false
           packages: ''
 
       - name: Install Android SDK and NDK packages
         shell: bash
         run: |
-          yes | sdkmanager --licenses >/dev/null
+          # The setup action accepts SDK licenses before installing packages.
           sdkmanager \
             "platform-tools" \
             "platforms;android-36" \
