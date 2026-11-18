@@ -88,7 +88,7 @@ if [ ! -f Makefile ] || [ ! -f config.status ] || [ "$SOURCE_DIR/configure" -nt 
   "$ENV_WRAPPER" "$SOURCE_DIR/configure" \
     --srcdir="$SOURCE_DIR" \
     --host="$HOST" \
-    --prefix=. \
+    --prefix="$BUILD_DIR/install" \
     --disable-opengl \
     --disable-sound \
     --with-embedded-lua \
