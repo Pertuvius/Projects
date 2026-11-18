@@ -36,7 +36,7 @@ FreedroidRPG already uses SDL 1.2 APIs. The Android runtime has an SDL 1.2 imple
 4. Make sure Android SDK, NDK, Java, Gradle, Python 3, GNU make, Autotools, `pkg-config` and `zip` are installed. Set `ANDROID_HOME` / `ANDROID_SDK_ROOT` and `ANDROID_NDK_HOME` as expected by that repository.
 5. Run `./build.sh debug freedroidrpg` from the repository root. The build script selects this app, generates the Android project settings from `AndroidAppSettings.cfg`, runs `AndroidPreBuild.sh`, builds the SDL 1.2, SDL_image and SDL_gfx Android modules, then invokes `AndroidBuild.sh` to cross-compile the original C game for `arm64-v8a`.
 
-The pre-build hook narrows the generated `APP_MODULES` list to SDL 1.2, the runtime helpers, JPEG/PNG, SDL_image and SDL_gfx. The runtime otherwise adds optional audio and font modules that this game build does not use.
+The pre-build hook narrows the generated `APP_MODULES` list to SDL 1.2, the runtime helpers, JPEG/PNG, SDL_image and SDL_gfx. It also guards the unused audio, codec and font module makefiles because the runtime validates their dependencies even when the game does not link them.
 ## What the patcher changes
 
 `tools/apply_port_patches.py` makes only Android software-surface compatibility edits:

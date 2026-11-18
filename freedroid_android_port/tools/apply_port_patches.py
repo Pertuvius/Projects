@@ -46,7 +46,20 @@ def patch_source(root: Path) -> list[str]:
 
 
 def configure_runtime_modules(project_root: Path) -> list[str]:
-    """Limit ndk-build to this app's SDL and image dependency closure."""
+    """Limit NDK modules and skip unused media makefiles for this silent build."""
+    changes: list[str] = []
+    guard = "ifeq ($(FREEDROID_OPTIONAL_MEDIA_ENABLED),1)"
+    optional_modules = ("sdl_mixer", "sdl_sound", "sdl_ttf", "flac", "fontconfig", "sndfile", "theora", "tremor")
+    for module in optional_modules:
+        path = project_root / "jni" / module / "Android.mk"
+        if not path.is_file():
+            raise SystemExit(f"Required SDL runtime module file is missing: {path}")
+        text = path.read_text(encoding="utf-8")
+        if guard not in text:
+            text = f"{guard}\n{text.rstrip()}\n\nendif # FREEDROID_OPTIONAL_MEDIA_ENABLED\n"
+            path.write_text(text, encoding="utf-8")
+            changes.append(f"{module}: optional media module guarded")
+
     settings = project_root / "jni" / "Settings.mk"
     if not settings.is_file():
         raise SystemExit(f"Generated SDL runtime settings are missing: {settings}")
@@ -69,8 +82,8 @@ def configure_runtime_modules(project_root: Path) -> list[str]:
     if lines[start:end + 1] != [replacement]:
         lines[start:end + 1] = [replacement]
         settings.write_text("\n".join(lines) + "\n", encoding="utf-8")
-        return [f"APP_MODULES restricted to {' '.join(required)}"]
-    return []
+        changes.append(f"APP_MODULES restricted to {' '.join(required)}")
+    return changes
 
 def main() -> int:
     parser = argparse.ArgumentParser()
