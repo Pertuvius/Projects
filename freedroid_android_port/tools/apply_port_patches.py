@@ -26,6 +26,8 @@ def patch_source(root: Path) -> list[str]:
         "src/init.c": [
             ("SDL_ListModes(NULL, SDL_FULLSCREEN|SDL_HWSURFACE)",
              "SDL_ListModes(NULL, SDL_FULLSCREEN)", 1),
+            ("S_IREAD | S_IWRITE | S_IEXEC",
+             "S_IRUSR | S_IWUSR | S_IXUSR", 1),
         ],
         "src/graphics.c": [
             ("SDL_CreateRGBSurface(SDL_HWSURFACE,", "SDL_CreateRGBSurface(0,", 1),
