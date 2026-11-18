@@ -56,7 +56,7 @@ jobs:
           git clone --depth 1 --branch sdl_android \
             https://github.com/pelya/commandergenius.git commandergenius
           git -C commandergenius submodule update --init --depth 1 \
-            project/jni/sdl2_image
+            project/jni/sdl2 project/jni/sdl2_image
           git -C commandergenius/project/jni/sdl2_image submodule update --init --depth 1 \
             external/jpeg external/libpng
 
