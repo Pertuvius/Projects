@@ -45,22 +45,32 @@ def patch_source(root: Path) -> list[str]:
     return applied
 
 
-def disable_unused_audio_modules(project_root: Path) -> list[str]:
-    """Keep runtime modules with optional media dependencies out of this silent build."""
-    changed: list[str] = []
-    guard = "ifeq ($(FREEDROID_OPTIONAL_MEDIA_ENABLED),1)"
-    for module in ("sdl_mixer", "sdl_sound", "sdl_ttf", "flac", "fontconfig", "sndfile", "theora", "tremor"):
-        path = project_root / "jni" / module / "Android.mk"
-        if not path.is_file():
-            raise SystemExit(f"Required SDL runtime module file is missing: {path}")
-        text = path.read_text(encoding="utf-8")
-        if guard in text:
-            continue
-        text = f"{guard}\n{text.rstrip()}\n\nendif # FREEDROID_OPTIONAL_MEDIA_ENABLED\n"
-        path.write_text(text, encoding="utf-8")
-        changed.append(f"{module}: optional media module guarded")
-    return changed
-
+def configure_runtime_modules(project_root: Path) -> list[str]:
+    """Limit ndk-build to this app's SDL and image dependency closure."""
+    settings = project_root / "jni" / "Settings.mk"
+    if not settings.is_file():
+        raise SystemExit(f"Generated SDL runtime settings are missing: {settings}")
+    lines = settings.read_text(encoding="utf-8").splitlines()
+    starts = [i for i, line in enumerate(lines) if line.startswith("APP_MODULES :=")]
+    if len(starts) != 1:
+        raise SystemExit(f"Expected one APP_MODULES assignment in {settings}, found {len(starts)}")
+    start = starts[0]
+    end = start
+    while lines[end].rstrip().endswith("\\"):
+        end += 1
+        if end >= len(lines):
+            raise SystemExit(f"Unterminated APP_MODULES assignment in {settings}")
+    current = " ".join(lines[start:end + 1]).split(":=", 1)[1].replace("\\", " ").split()
+    required = ["sdl-1.2", "sdl_native_helpers", "jpeg", "png", "sdl_image", "sdl_gfx"]
+    missing = [module for module in required if module not in current]
+    if missing:
+        raise SystemExit(f"Required modules missing from APP_MODULES in {settings}: {', '.join(missing)}")
+    replacement = "APP_MODULES := " + " ".join(required)
+    if lines[start:end + 1] != [replacement]:
+        lines[start:end + 1] = [replacement]
+        settings.write_text("\n".join(lines) + "\n", encoding="utf-8")
+        return [f"APP_MODULES restricted to {' '.join(required)}"]
+    return []
 
 def main() -> int:
     parser = argparse.ArgumentParser()
@@ -69,7 +79,7 @@ def main() -> int:
     args = parser.parse_args()
 
     changes = patch_source(args.source.absolute())
-    changes.extend(disable_unused_audio_modules(args.runtime_project.absolute()))
+    changes.extend(configure_runtime_modules(args.runtime_project.absolute()))
     if changes:
         print("Applied Android compatibility changes:")
         for change in changes:
