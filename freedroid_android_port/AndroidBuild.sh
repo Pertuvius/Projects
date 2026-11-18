@@ -54,7 +54,7 @@ LIBDIR="$PROJECT/obj/local/$ABI"
 case "${1:---cflags}" in
   --version) echo 1.2.15 ;;
   --cflags)
-    printf '%s\n' "-I$JNI/sdl-1.2/include -I$JNI/sdl_image -I$JNI/sdl_image/include -I$JNI/sdl_gfx -I$JNI/sdl_gfx/include"
+    printf '%s\n' "-I$JNI/sdl-1.2/include -I$JNI/sdl_image -I$JNI/sdl_image/include -I$JNI/png/include/android -I$JNI/sdl_gfx -I$JNI/sdl_gfx/include"
     ;;
   --libs|--static-libs)
     printf '%s\n' "-L$LIBDIR -lsdl-1.2"

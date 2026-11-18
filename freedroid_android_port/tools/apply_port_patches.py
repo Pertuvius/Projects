@@ -85,6 +85,7 @@ def configure_runtime_modules(project_root: Path) -> list[str]:
         changes.append(f"APP_MODULES restricted to {' '.join(required)}")
     return changes
 
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--source", type=Path, required=True)
