@@ -34,9 +34,15 @@ The Android SDL runtime's README explicitly states that the software path should
 
 FreedroidRPG data is large (Debian's 1.0 data package reports roughly 223 MB compressed and 249 MB installed). The development configuration packages `data/` and `lua_modules/` into a first-run ZIP in `AndroidData/`. For a production Play Store release, the runtime README recommends hosting data files larger than 150 MB and using an HTTPS data URL; an install-time asset-pack implementation is another distribution option but needs a defined extraction path before the game's normal filesystem loader can consume it.
 
+## Build verification
+
+GitHub Actions run 44289307035 (Fetch SDL2 dependency for NDK module graph) downloaded the SDL Android runtime and FreedroidRPG 1.0 source, applied the compatibility patches, and created AndroidData/freedroid-data.zip. The Android NDK first pass then stopped because the shared runtime SDL 1.2 mixer module references an undefined ogg module. APK packaging did not run, so no APK is verified.
+
+AndroidPreBuild.sh now sets APP_ALLOW_MISSING_DEPS := true in the generated runtime settings. The app does not compile or link SDL_mixer; required FreedroidRPG modules remain explicitly listed in CompiledLibraries, and actual compile/link failures still fail the workflow.
+
 ## What remains unverified
 
-- No actual Android compilation or APK packaging has been completed for this overlay yet. The first GitHub Actions run is the first complete cross-build attempt.
-- The SDL 1.2 Android runtime and the game's full source/data archives could not be downloaded into this container because outbound DNS resolution is blocked.
-- The generated app overlay still needs to be run in a full Android SDK/NDK workstation; the first required acceptance test is launching the original game to its title screen on ARM64 hardware.
-- Initial build intentionally omits audio. Touch-control ergonomics, save path, lifecycle/resume, software-rendering performance and full playability must be tested after the first launch.
+- The game native library and APK have not yet completed a successful build.
+- No device launch or title-screen test has been performed.
+- Touch-control ergonomics, save paths, lifecycle/resume, performance and playability need device testing.
+- The initial build intentionally omits audio. Adding audio requires integrating and validating the runtime mixer and codec modules.

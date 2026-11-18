@@ -12,6 +12,18 @@ if [ ! -d "$SOURCE_DIR/src" ] || [ ! -f "$SOURCE_DIR/configure" ] || [ ! -d "$SO
 fi
 
 python3 "$PATCHER" --source "$SOURCE_DIR"
+PROJECT_SETTINGS=$(CDPATH= cd -- "$APP_DIR/../../.." && pwd -P)/jni/Settings.mk
+if [ ! -f "$PROJECT_SETTINGS" ]; then
+  echo "Runtime settings file not found: $PROJECT_SETTINGS" >&2
+  exit 4
+fi
+if ! grep -q '^APP_ALLOW_MISSING_DEPS := true$' "$PROJECT_SETTINGS"; then
+  cat >> "$PROJECT_SETTINGS" <<'SETTINGS_EOF'
+# This app omits audio; ignore unresolved dependencies of unused shared-runtime modules.
+APP_ALLOW_MISSING_DEPS := true
+SETTINGS_EOF
+fi
+
 
 # The SDL Android runtime automatically extracts this first-run data ZIP into
 # app-private storage. This is convenient for sideloaded test APKs. For a Play
