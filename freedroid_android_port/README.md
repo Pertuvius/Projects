@@ -32,7 +32,7 @@ FreedroidRPG already uses SDL 1.2 APIs. The Android runtime has an SDL 1.2 imple
 
    `commandergenius/project/jni/application/freedroidrpg/freedroidRPG-1.0/`
 
-   The extracted directory must contain `configure`, `configure.ac`, `src/`, `data/` and `lua_modules/`. The workflow normalizes the archive directory name to `freedroidRPG-1.0` before building.
+   The extracted release archive must contain `configure`, `src/`, `data/` and `lua_modules/`. It may omit the Autotools input file (configure.ac) included in a developer checkout. The workflow normalizes the archive directory name to `freedroidRPG-1.0` before building.
 4. Make sure Android SDK, NDK, Java, Gradle, Python 3, GNU make, Autotools, `pkg-config` and `zip` are installed. Set `ANDROID_HOME` / `ANDROID_SDK_ROOT` and `ANDROID_NDK_HOME` as expected by that repository.
 5. Run `./build.sh debug freedroidrpg` from the repository root. The build script selects this app, generates the Android project settings from `AndroidAppSettings.cfg`, runs `AndroidPreBuild.sh`, builds the SDL 1.2, SDL_image and SDL_gfx Android modules, then invokes `AndroidBuild.sh` to cross-compile the original C game for `arm64-v8a`.
 

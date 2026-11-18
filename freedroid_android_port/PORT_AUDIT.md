@@ -36,15 +36,10 @@ FreedroidRPG data is large (Debian's 1.0 data package reports roughly 223 MB com
 
 ## Build verification
 
-GitHub Actions run 44289307035 downloaded the SDL Android runtime and FreedroidRPG 1.0 source, ran the pre-build hook, applied the compatibility patches, and created AndroidData/freedroid-data.zip. The Android NDK first pass then stopped because the shared runtime's unused SDL 1.2 mixer module references an undefined ogg module.
+GitHub Actions run 44289307035 downloaded the SDL Android runtime and FreedroidRPG 1.0 source, ran the pre-build hook, applied the compatibility patches, and created AndroidData/freedroid-data.zip. Its NDK first pass stopped on the shared runtime's unused SDL 1.2 mixer reference to an undefined ogg module.
 
-Run 44290864690 stopped at the same NDK dependency check. The pre-build hook had lost its executable bit in an intervening commit, so it did not apply the APP_ALLOW_MISSING_DEPS setting or prepare the game data. The hook is executable again at the current branch head; the next Actions run will verify that fix.
+Run 44290864690 stopped at the same NDK check because the pre-build hook was not executable in that commit. The hook's executable bit was restored afterward.
 
-No game native library or APK has completed a successful build.
+Run 44291736680 confirmed the hook runs, then found that the release archive contains generated configure but omits configure.ac; the patcher had required a developer-checkout file that the release archive does not include. The patcher and custom build script now use the generated configure script from the archive.
 
-## What remains unverified
-
-- The game native library and APK have not yet completed a successful build.
-- No device launch or title-screen test has been performed.
-- Touch-control ergonomics, save paths, lifecycle/resume, performance and playability need device testing.
-- The initial build intentionally omits audio. Adding audio requires integrating and validating the runtime mixer and codec modules.
+No game native library or APK has completed a successful build. Device launch, controls, save paths, lifecycle/resume, performance and playability remain unverified.

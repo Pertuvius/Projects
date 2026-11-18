@@ -84,7 +84,7 @@ export LDFLAGS="-L$LIB_DIR ${LDFLAGS:-}"
 export LIBS="-lsdl-1.2 -ljpeg -lpng -lz ${LIBS:-}"
 
 cd "$BUILD_DIR"
-if [ ! -f Makefile ] || [ "$SOURCE_DIR/configure.ac" -nt config.status ]; then
+if [ ! -f Makefile ] || [ ! -f config.status ] || [ "$SOURCE_DIR/configure" -nt config.status ]; then
   "$ENV_WRAPPER" "$SOURCE_DIR/configure" \
     --srcdir="$SOURCE_DIR" \
     --host="$HOST" \

@@ -50,7 +50,7 @@ def main() -> int:
     parser.add_argument("--source", type=Path, required=True)
     args = parser.parse_args()
     root = args.source.resolve()
-    if not (root / "configure.ac").is_file():
+    if not (root / "configure").is_file():
         raise SystemExit(f"Not a FreedroidRPG source directory: {root}")
     changes = patch_source(root)
     if changes:
