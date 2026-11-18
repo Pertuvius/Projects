@@ -11,16 +11,6 @@ if [ ! -d "$SOURCE_DIR/src" ] || [ ! -f "$SOURCE_DIR/configure" ] || [ ! -d "$SO
   exit 2
 fi
 
-echo "Pre-build source root: $SOURCE_DIR"
-for required in configure src/init.c src/graphics.c src/image.c; do
-  if [ -e "$SOURCE_DIR/$required" ]; then
-    echo "Present before patching: $required"
-  else
-    echo "Missing before patching: $required" >&2
-  fi
-done
-stat -c 'Shell sees %n inode=%i type=%F' "$SOURCE_DIR/src/init.c"
-python3 -c 'import os,sys; p=sys.argv[1]; print("Python sees", repr(p), "exists=", os.path.exists(p), "realpath=", os.path.realpath(p))' "$SOURCE_DIR/src/init.c"
 python3 "$PATCHER" --source "$SOURCE_DIR"
 PROJECT_ROOT=$(CDPATH= cd -- "$APP_DIR/../../.." && pwd -P)
 APP_MAKEFILE="$PROJECT_ROOT/jni/Application.mk"

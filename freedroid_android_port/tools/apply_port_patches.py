@@ -37,7 +37,6 @@ def patch_source(root: Path) -> list[str]:
     }
     for relative, edits in targets.items():
         path = root / relative
-        print(f"Checking source file {path}: exists={path.exists()}, is_file={path.is_file()}", flush=True)
         if not path.is_file():
             raise SystemExit(f"Required source file is missing: {path}")
         for old, new, expected in edits:
@@ -51,7 +50,6 @@ def main() -> int:
     parser.add_argument("--source", type=Path, required=True)
     args = parser.parse_args()
     root = args.source.absolute()
-    print(f"Python source root: arg={args.source!s} arg_exists={args.source.exists()} root={root!s} root_exists={root.exists()} root_is_dir={root.is_dir()}", flush=True)
     changes = patch_source(root)
     if changes:
         print("Applied Android SDL compatibility changes:")
