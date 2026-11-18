@@ -56,8 +56,6 @@ def disable_unused_audio_modules(project_root: Path) -> list[str]:
         text = path.read_text(encoding="utf-8")
         if guard in text:
             continue
-        if not text.startswith("LOCAL_PATH := $(call my-dir)"):
-            raise SystemExit(f"Unexpected SDL runtime makefile format: {path}")
         text = f"{guard}\n{text.rstrip()}\n\nendif # FREEDROID_OPTIONAL_MEDIA_ENABLED\n"
         path.write_text(text, encoding="utf-8")
         changed.append(f"{module}: optional media module guarded")
