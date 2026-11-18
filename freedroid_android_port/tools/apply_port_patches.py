@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Apply small, idempotent SDL-Android compatibility edits to FreedroidRPG."""
+"""Apply idempotent SDL-Android compatibility edits to FreedroidRPG and runtime."""
 from __future__ import annotations
 
 import argparse
@@ -45,18 +45,39 @@ def patch_source(root: Path) -> list[str]:
     return applied
 
 
+def disable_unused_audio_modules(project_root: Path) -> list[str]:
+    """Keep optional SDL_mixer/FLAC modules out while this port disables sound."""
+    changed: list[str] = []
+    guard = "ifeq ($(FREEDROID_AUDIO_ENABLED),1)"
+    for module in ("sdl_mixer", "flac"):
+        path = project_root / "jni" / module / "Android.mk"
+        if not path.is_file():
+            raise SystemExit(f"Required SDL runtime module file is missing: {path}")
+        text = path.read_text(encoding="utf-8")
+        if guard in text:
+            continue
+        if not text.startswith("LOCAL_PATH := $(call my-dir)"):
+            raise SystemExit(f"Unexpected SDL runtime makefile format: {path}")
+        text = f"{guard}\n{text.rstrip()}\n\nendif # FREEDROID_AUDIO_ENABLED\n"
+        path.write_text(text, encoding="utf-8")
+        changed.append(f"{module}: optional audio module guarded")
+    return changed
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--source", type=Path, required=True)
+    parser.add_argument("--runtime-project", type=Path, required=True)
     args = parser.parse_args()
-    root = args.source.absolute()
-    changes = patch_source(root)
+
+    changes = patch_source(args.source.absolute())
+    changes.extend(disable_unused_audio_modules(args.runtime_project.absolute()))
     if changes:
-        print("Applied Android SDL compatibility changes:")
+        print("Applied Android compatibility changes:")
         for change in changes:
             print("  -", change)
     else:
-        print("Android SDL compatibility changes already applied.")
+        print("Android compatibility changes already applied.")
     return 0
 
 
