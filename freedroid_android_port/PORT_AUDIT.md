@@ -38,7 +38,7 @@ FreedroidRPG data is large (Debian's 1.0 data package reports roughly 223 MB com
 
 GitHub Actions run 44289307035 (Fetch SDL2 dependency for NDK module graph) downloaded the SDL Android runtime and FreedroidRPG 1.0 source, applied the compatibility patches, and created AndroidData/freedroid-data.zip. The Android NDK first pass then stopped because the shared runtime SDL 1.2 mixer module references an undefined ogg module. APK packaging did not run, so no APK is verified.
 
-AndroidPreBuild.sh now sets APP_ALLOW_MISSING_DEPS := true in the generated runtime settings. The app does not compile or link SDL_mixer; required FreedroidRPG modules remain explicitly listed in CompiledLibraries, and actual compile/link failures still fail the workflow.
+AndroidPreBuild.sh now appends APP_ALLOW_MISSING_DEPS := true to the runtime Application.mk before the NDK runs. The app does not compile or link SDL_mixer; required FreedroidRPG modules remain explicitly listed in CompiledLibraries, and actual compile/link failures still fail the workflow.
 
 ## What remains unverified
 

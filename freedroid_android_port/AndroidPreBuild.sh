@@ -12,17 +12,19 @@ if [ ! -d "$SOURCE_DIR/src" ] || [ ! -f "$SOURCE_DIR/configure" ] || [ ! -d "$SO
 fi
 
 python3 "$PATCHER" --source "$SOURCE_DIR"
-PROJECT_SETTINGS=$(CDPATH= cd -- "$APP_DIR/../../.." && pwd -P)/jni/Settings.mk
-if [ ! -f "$PROJECT_SETTINGS" ]; then
-  echo "Runtime settings file not found: $PROJECT_SETTINGS" >&2
+PROJECT_ROOT=$(CDPATH= cd -- "$APP_DIR/../../.." && pwd -P)
+APP_MAKEFILE="$PROJECT_ROOT/jni/Application.mk"
+if [ ! -f "$APP_MAKEFILE" ]; then
+  echo "Runtime Application.mk not found: $APP_MAKEFILE" >&2
   exit 4
 fi
-if ! grep -q '^APP_ALLOW_MISSING_DEPS := true$' "$PROJECT_SETTINGS"; then
-  cat >> "$PROJECT_SETTINGS" <<'SETTINGS_EOF'
+if ! grep -q '^APP_ALLOW_MISSING_DEPS := true$' "$APP_MAKEFILE"; then
+  cat >> "$APP_MAKEFILE" <<'APP_MK_EOF'
 # This app omits audio; ignore unresolved dependencies of unused shared-runtime modules.
 APP_ALLOW_MISSING_DEPS := true
-SETTINGS_EOF
+APP_MK_EOF
 fi
+grep '^APP_ALLOW_MISSING_DEPS := true$' "$APP_MAKEFILE"
 
 
 # The SDL Android runtime automatically extracts this first-run data ZIP into
