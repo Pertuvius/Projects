@@ -97,6 +97,8 @@ jobs:
           fi
 
       - name: Build ARM64 debug APK
+        env:
+          FREEDROID_TRACE_ANDROID_DEPS: "1"
         working-directory: commandergenius
         run: ./build.sh debug freedroidrpg
 

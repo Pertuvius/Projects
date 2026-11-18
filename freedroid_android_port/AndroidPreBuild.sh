@@ -13,7 +13,12 @@ fi
 
 PROJECT_ROOT=$(CDPATH= cd -- "$APP_DIR/../../.." && pwd -P)
 python3 "$PATCHER" --source "$SOURCE_DIR" --runtime-project "$PROJECT_ROOT"
-
+if [ "${FREEDROID_TRACE_ANDROID_DEPS:-0}" = 1 ]; then
+  echo "Generated runtime settings with dependency names:"
+  grep -nEi 'COMPILED_LIBRARIES|ogg|flac|sound|mixer' "$PROJECT_ROOT/jni/Settings.mk" || true
+  echo "Android.mk codec and audio references after overlay patching:"
+  grep -RIn --include=Android.mk -E 'ogg|vorbis|flac|sndfile|sdl_sound|sdl_mixer' "$PROJECT_ROOT/jni" | head -n 80 || true
+fi
 # The SDL Android runtime automatically extracts this first-run data ZIP into
 # app-private storage. This is convenient for sideloaded test APKs. For a Play
 # release, host the ZIP and replace the local filename in AndroidAppSettings.cfg
