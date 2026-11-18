@@ -50,7 +50,7 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--source", type=Path, required=True)
     args = parser.parse_args()
-    root = args.source.resolve()
+    root = args.source.absolute()
     changes = patch_source(root)
     if changes:
         print("Applied Android SDL compatibility changes:")
